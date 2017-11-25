@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">FaceIdDemo</string>
+    <string name="fd_login_edit_account_hint">请输入帐号</string>
+    <string name="fd_login_edit_pwd_hint">请输入密码</string>
+</resources>
