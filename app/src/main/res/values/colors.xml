@@ -4,5 +4,6 @@
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
     <color name="fd_white">#ffffffff</color>
+    <color name="fd_gray">#eeeeeeee</color>
 
 </resources>

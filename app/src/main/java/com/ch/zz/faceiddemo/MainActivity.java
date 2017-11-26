@@ -1,18 +1,28 @@
 package com.ch.zz.faceiddemo;
 
+import android.Manifest;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.ch.zz.faceiddemo.http.FDRequest;
-import com.ch.zz.faceiddemo.utils.Base64PicUtil;
+import com.amap.api.location.AMapLocation;
+import com.amap.api.location.AMapLocationClient;
+import com.amap.api.location.AMapLocationClientOption;
+import com.amap.api.location.AMapLocationListener;
+import com.ch.zz.faceiddemo.utils.FDLocation;
+import com.ch.zz.faceiddemo.utils.T;
 
-public class MainActivity extends AppCompatActivity {
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+
+import pub.devrel.easypermissions.EasyPermissions;
+
+public class MainActivity extends AppCompatActivity implements EasyPermissions.PermissionCallbacks {
 
     private TextView statusText;
     private Button loginSkip;
@@ -25,7 +35,34 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         initView();
         initEvent();
+        String[] perms = {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION};
+        if (EasyPermissions.hasPermissions(this, perms)) {
+            location();
+        } else {
+            EasyPermissions.requestPermissions(this, "请开启手机定位再使用", 100, perms);
+        }
     }
+
+    @Override
+    public void onPermissionsGranted(int requestCode, List<String> perms) {
+        if (requestCode == 100) {
+            T.show("定位权限已经打开");
+            FDLocation.getInstance().location();
+        }
+    }
+
+    @Override
+    public void onPermissionsDenied(int requestCode, List<String> perms) {
+        if (requestCode == 100) {
+            T.show("请开启权限在打开app");
+            finish();
+        }
+    }
+
+    private void location() {
+        FDLocation.getInstance().location();
+    }
+
 
     private void initEvent() {
         loginSkip.setOnClickListener(new View.OnClickListener() {
@@ -53,6 +90,13 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 registration();
+            }
+        });
+
+        findViewById(R.id.fd_rigit_to_main).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
             }
         });
     }

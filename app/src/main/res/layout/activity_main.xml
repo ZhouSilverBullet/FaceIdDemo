@@ -36,7 +36,14 @@
             android:id="@+id/fd_login_to_main"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="人脸登录" />
+            android:text="人脸绑定" />
+
+        <Button
+            android:id="@+id/fd_rigit_to_main"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="人脸登陆" />
+
     </LinearLayout>
 
 </LinearLayout>

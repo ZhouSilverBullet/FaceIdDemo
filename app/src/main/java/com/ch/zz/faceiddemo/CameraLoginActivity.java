@@ -1,0 +1,13 @@
+package com.ch.zz.faceiddemo;
+
+import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
+
+public class CameraLoginActivity extends AppCompatActivity {
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_camera_login);
+    }
+}

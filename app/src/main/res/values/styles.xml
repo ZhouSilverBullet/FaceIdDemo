@@ -13,4 +13,7 @@
         <item name="android:windowFullscreen">true</item>
         <item name="android:windowActionBar">false</item>
     </style>
+    <style name="ch_no_bg_style" parent="ch_base_style">
+        <item name="android:backgroundDimEnabled">false</item>
+    </style>
 </resources>

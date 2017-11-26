@@ -7,6 +7,8 @@ import android.view.View;
 import android.widget.EditText;
 
 import com.ch.zz.faceiddemo.http.FDRequest;
+import com.ch.zz.faceiddemo.http.HttpCallback;
+import com.ch.zz.faceiddemo.utils.FDLocation;
 import com.ch.zz.faceiddemo.utils.T;
 
 import java.util.HashMap;
@@ -47,7 +49,26 @@ public class RegistActivity extends AppCompatActivity {
         HashMap<String, String> map = new HashMap<>();
         map.put("un", accountValue);
         map.put("pd", pwdValue);
-        FDRequest.post("http://face.zhouyang.space/user/register", map);
+        double latitude = FDLocation.getLatitude();
+        double longitude = FDLocation.getLongitude();
+        if (latitude == 0 && longitude == 0) {
+            FDLocation.getInstance().location();
+        }
+        latitude = FDLocation.getLatitude();
+        longitude = FDLocation.getLongitude();
+        map.put("jd", latitude + "");
+        map.put("wd", longitude + "");
+        FDRequest.post("http://face.zhouyang.space/user/register", map, new HttpCallback<HashMap<String, String>>() {
+            @Override
+            public void onSuccess(HashMap<String, String> s) {
+                T.show("注册成功");
+            }
+
+            @Override
+            public void onFailure(int code, String error) {
+                T.show(error);
+            }
+        });
     }
 
     private void initView() {

@@ -70,6 +70,7 @@ public class CameraAct extends AppCompatActivity implements Camera.PreviewCallba
                 initCarema();
             } else {
                 Toast.makeText(this, "CAMERA PERMISSION DENIED", Toast.LENGTH_SHORT).show();
+                finish();
             }
             return;
         }
@@ -244,6 +245,7 @@ public class CameraAct extends AppCompatActivity implements Camera.PreviewCallba
                     int type = bun.getInt("type");
                     if (type == 1) {
                         faceStatus.setText("识别到人脸");
+                        //todo 让计算机停下来，然后发送给后台
                     } else {
                         faceStatus.setText("没有识别到人脸");
                     }
@@ -370,6 +372,9 @@ public class CameraAct extends AppCompatActivity implements Camera.PreviewCallba
                     Bundle bun = new Bundle();
                     bun.putInt("type", type);
                     bun.putString("msg", logMsg);
+                    if (bitmap != null && facePostion != null) {
+                        bun.putParcelable("bitmap", bitmap);
+                    }
                     message.setData(bun);
                     mHandler.sendMessage(message);
                 }
