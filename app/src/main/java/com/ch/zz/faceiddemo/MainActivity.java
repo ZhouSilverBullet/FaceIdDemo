@@ -96,9 +96,15 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         findViewById(R.id.fd_rigit_to_main).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                cameraLogin();
             }
         });
+    }
+
+    private void cameraLogin() {
+        Intent intent = new Intent(this, CameraLoginActivity.class);
+        intent.putExtra("type", 10);
+        startActivityForResult(intent, REQUEST_CODE);
     }
 
     private void registration() {
@@ -107,7 +113,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     }
 
     private void manLogin() {
-        Intent intent = new Intent(this, CameraAct.class);
+        Intent intent = new Intent(this, CameraLoginActivity.class);
         startActivityForResult(intent, REQUEST_CODE);
     }
 

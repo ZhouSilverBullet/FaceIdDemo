@@ -3,6 +3,7 @@ package com.ch.zz.faceiddemo;
 import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -17,6 +18,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
+import android.os.Looper;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
@@ -31,11 +33,20 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.ch.zz.faceiddemo.http.FDRequest;
+import com.ch.zz.faceiddemo.http.HttpCallback;
 import com.ch.zz.faceiddemo.utils.AutoFitTextureView;
+import com.ch.zz.faceiddemo.utils.Base64PicUtil;
 import com.ch.zz.faceiddemo.utils.FaceHelper;
+import com.ch.zz.faceiddemo.utils.T;
+import com.ch.zz.faceiddemo.wight.LoadingDialog;
 import com.orhanobut.logger.Logger;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
 
@@ -44,6 +55,9 @@ import java.util.List;
  */
 
 public class CameraAct extends AppCompatActivity implements Camera.PreviewCallback, View.OnClickListener {
+
+    private int loginType;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -201,6 +215,11 @@ public class CameraAct extends AppCompatActivity implements Camera.PreviewCallba
 
             }
         });
+
+        Intent intent = getIntent();
+        if (intent != null) {
+            loginType = intent.getIntExtra("type", -1);
+        }
     }
 
     private void initCarema() {
@@ -235,6 +254,8 @@ public class CameraAct extends AppCompatActivity implements Camera.PreviewCallba
         }
     }
 
+    private boolean loading = false;
+
     private Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -246,6 +267,15 @@ public class CameraAct extends AppCompatActivity implements Camera.PreviewCallba
                     if (type == 1) {
                         faceStatus.setText("识别到人脸");
                         //todo 让计算机停下来，然后发送给后台
+                        synchronized (this) {
+                            if (!loading) {
+                                if (loginType == 10) {
+                                    loginImg(bun);
+                                } else {
+                                    pushImg(bun);
+                                }
+                            }
+                        }
                     } else {
                         faceStatus.setText("没有识别到人脸");
                     }
@@ -254,6 +284,120 @@ public class CameraAct extends AppCompatActivity implements Camera.PreviewCallba
             }
         }
     };
+
+    private void loginImg(Bundle bun) {
+        loading = true;
+        final Bitmap bitmap = (Bitmap) bun.get("bitmap");
+//        mCamera.stopPreview();
+        if (bitmap != null && !bitmap.isRecycled()) {
+//                            if (Gloab.getInstance().getBean() == null) {
+//                                T.show("请进行登录");
+//                            } else {
+            final LoadingDialog dialog = new LoadingDialog(CameraAct.this, "");
+            dialog.show();
+            new Thread() {
+                @Override
+                public void run() {
+                    File cacheDir = CameraAct.this.getExternalCacheDir();
+                    try {
+                        FileOutputStream fos = new FileOutputStream(cacheDir + "/name.jpeg");
+                        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                    }
+                    FDRequest.post("http://face.zhouyang.space/baiduface/verifyUser", new File(cacheDir + "/name.jpeg"), new HttpCallback<String>() {
+                        @Override
+                        public void onSuccess(final String s) {
+                            new Handler(Looper.getMainLooper()).post(new Runnable() {
+                                @Override
+                                public void run() {
+//                                    mCamera.startPreview();
+                                    T.show(s);
+                                    if (dialog != null) {
+                                        dialog.dismiss();
+                                    }
+                                    loading = false;
+                                }
+                            });
+                        }
+
+                        @Override
+                        public void onFailure(int code, final String error) {
+                            new Handler(Looper.getMainLooper()).post(new Runnable() {
+                                @Override
+                                public void run() {
+//                                    mCamera.startPreview();
+                                    T.show(error);
+                                    if (dialog != null) {
+                                        dialog.dismiss();
+                                    }
+                                    loading = false;
+                                }
+                            });
+                        }
+                    });
+                }
+            }.start();
+        }
+    }
+
+    private void pushImg(Bundle bun) {
+        loading = true;
+        final Bitmap bitmap = (Bitmap) bun.get("bitmap");
+//        mCamera.stopPreview();
+        if (bitmap != null && !bitmap.isRecycled()) {
+//                            if (Gloab.getInstance().getBean() == null) {
+//                                T.show("请进行登录");
+//                            } else {
+            final LoadingDialog dialog = new LoadingDialog(CameraAct.this, "");
+            dialog.show();
+            new Thread() {
+                @Override
+                public void run() {
+                    File cacheDir = CameraAct.this.getExternalCacheDir();
+                    try {
+                        FileOutputStream fos = new FileOutputStream(cacheDir + "/name.jpeg");
+                        bitmap.compress(Bitmap.CompressFormat.JPEG, 80, fos);
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                    }
+                    FDRequest.post("http://face.zhouyang.space/baiduface/addUser", new File(cacheDir + "/name.jpeg"), new HttpCallback<String>() {
+                        @Override
+                        public void onSuccess(final String s) {
+                            new Handler(Looper.getMainLooper()).post(new Runnable() {
+                                @Override
+                                public void run() {
+//                                    mCamera.startPreview();
+                                    T.show(s);
+                                    if (dialog != null) {
+                                        dialog.dismiss();
+                                    }
+                                    loading = false;
+                                }
+                            });
+                        }
+
+                        @Override
+                        public void onFailure(int code, final String error) {
+                            new Handler(Looper.getMainLooper()).post(new Runnable() {
+                                @Override
+                                public void run() {
+//                                    mCamera.startPreview();
+                                    T.show(error);
+                                    if (dialog != null) {
+                                        dialog.dismiss();
+                                    }
+                                    loading = false;
+                                }
+                            });
+                        }
+                    });
+                }
+            }.start();
+//                            }
+        }
+    }
+
     int degrees = 0;
 
     public void setCameraDisplayOrientation(Activity activity, int cameraId, Camera camera) {
@@ -350,6 +494,7 @@ public class CameraAct extends AppCompatActivity implements Camera.PreviewCallba
                     Logger.i(TAG + logMsg);
                     FaceDetector.Face facePostion = null;
                     int index = 0;
+                    Bitmap bitmap2 = null;
                     if (faces != null) {
                         for (FaceDetector.Face face : faces) {
                             if (face == null) {
@@ -361,22 +506,24 @@ public class CameraAct extends AppCompatActivity implements Camera.PreviewCallba
                                 type = 0;
                                 break;
                             } else {
+                                bitmap2 = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), mMatrix, false);
                                 Logger.e("有人脸");
                                 facePostion = face;
                                 type = 1;
+                                Message message = mHandler.obtainMessage(1);
+                                Bundle bun = new Bundle();
+                                bun.putInt("type", type);
+                                bun.putString("msg", logMsg);
+                                if (bitmap2 != null && facePostion != null) {
+                                    bun.putParcelable("bitmap", bitmap2);
+                                }
+                                message.setData(bun);
+                                mHandler.sendMessage(message);
                                 break;
                             }
                         }
                     }
-                    Message message = mHandler.obtainMessage(1);
-                    Bundle bun = new Bundle();
-                    bun.putInt("type", type);
-                    bun.putString("msg", logMsg);
-                    if (bitmap != null && facePostion != null) {
-                        bun.putParcelable("bitmap", bitmap);
-                    }
-                    message.setData(bun);
-                    mHandler.sendMessage(message);
+
                 }
             } catch (Exception e) {
                 e.printStackTrace();

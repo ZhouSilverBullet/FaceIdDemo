@@ -26,7 +26,7 @@ public class Base64PicUtil {
         String string = null;
         try {
             ByteArrayOutputStream bStream = new ByteArrayOutputStream();
-            bitmap.compress(Bitmap.CompressFormat.PNG, 100, bStream);
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 40, bStream);
             byte[] bytes = bStream.toByteArray();
             string = Base64.encodeToString(bytes, Base64.DEFAULT);
         } catch (Exception e) {

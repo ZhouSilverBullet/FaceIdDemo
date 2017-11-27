@@ -4,21 +4,25 @@ import android.os.Handler;
 import android.os.Looper;
 import android.text.TextUtils;
 
-import com.ch.zz.faceiddemo.utils.T;
+import com.ch.zz.faceiddemo.Gloab;
+import com.ch.zz.faceiddemo.bean.UserBean;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.FormBody;
+import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.RequestBody;
 import okhttp3.Response;
 
 /**
@@ -30,30 +34,55 @@ public class FDRequest {
     private static Handler handler = new Handler(Looper.getMainLooper());
 
 
-    public static void post(String url, String imgBase) {
-        MultipartBody.Builder builder = new MultipartBody.Builder().setType(MultipartBody.FORM);
-        builder.addFormDataPart("img", imgBase);
-        MultipartBody build = builder.build();
+    public static void post(String url, File f, final HttpCallback<String> callback) {
+        UserBean bean = Gloab.getInstance().getBean();
+        if (bean == null) {
+            if (callback != null) {
+                callback.onFailure(0, "请登录");
+            }
+            return;
+        }
+        MultipartBody build = new MultipartBody.Builder().setType(MultipartBody.FORM).addFormDataPart("img",
+                f.getName(), RequestBody.create(MediaType.parse("image/png"), f)).addFormDataPart("ui", bean.ui == null ? "0" : bean.ui).build();
         Request request = new Request.Builder().post(build).url(url).build();
         okHttpClient.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        T.show("失败");
-                    }
-                });
+                if (callback != null) {
+                    callback.onFailure(0, "未知错误");
+                }
             }
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        T.show("成功");
+                String result = response.body().string();
+                if (callback != null) {
+                    if (TextUtils.isEmpty(result)) {
+                        if (callback != null) {
+                            callback.onFailure(0, "未知错误(111)");
+                        }
+                        return;
                     }
-                });
+
+                    JSONObject jsonObject = null;
+                    try {
+                        jsonObject = new JSONObject(result);
+                    } catch (JSONException e) {
+                        if (callback != null) {
+                            callback.onFailure(0, "");
+                        }
+                    }
+
+                    if (jsonObject != null && callback != null) {
+                        int code = JsonUtil.getStatusCode(jsonObject);
+                        String msg = JsonUtil.getServerMsg(jsonObject);
+                        if (code != 200) {
+                            callback.onFailure(code, msg);
+                        } else {
+                            callback.onSuccess("成功");
+                        }
+                    }
+                }
             }
         });
     }

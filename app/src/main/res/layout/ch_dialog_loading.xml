@@ -2,16 +2,16 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="120dp"
     android:layout_height="100dp"
-    android:gravity="center"
     android:background="@drawable/ch_dialog_loading_bg"
-    android:orientation="vertical" >
+    android:gravity="center"
+    android:orientation="vertical">
 
     <FrameLayout
         android:id="@+id/ch_dialog_loading_pb"
         android:layout_width="50dp"
         android:layout_height="50dp">
 
-        <com.caohua.games.ui.widget.TwoBallRotationProgressBar
+        <ProgressBar
             android:id="@+id/ch_dialog_loading_progress"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />

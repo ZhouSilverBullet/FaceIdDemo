@@ -5,5 +5,6 @@
     <color name="colorAccent">#FF4081</color>
     <color name="fd_white">#ffffffff</color>
     <color name="fd_gray">#eeeeeeee</color>
+    <color name="fd_transparent">#00000000</color>
 
 </resources>
