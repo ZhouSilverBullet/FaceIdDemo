@@ -1,11 +1,14 @@
-package com.ch.zz.faceiddemo;
+package com.ch.zz.faceiddemo.fragment;
 
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
+import android.support.annotation.Nullable;
 import android.text.TextUtils;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.EditText;
 
+import com.ch.zz.faceiddemo.R;
 import com.ch.zz.faceiddemo.http.FDRequest;
 import com.ch.zz.faceiddemo.http.HttpCallback;
 import com.ch.zz.faceiddemo.utils.FDLocation;
@@ -13,31 +16,37 @@ import com.ch.zz.faceiddemo.utils.T;
 
 import java.util.HashMap;
 
-public class RegistActivity extends AppCompatActivity {
+/**
+ * Created by admin on 2017/12/6.
+ */
 
-    private EditText registAccount;
-    private EditText registPwd;
+public class RegisterFragment extends BaseFragment {
+    private EditText registerAccount;
+    private EditText registerPwd;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_regist);
-        initView();
-        initEvent();
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View inflate = inflater.inflate(R.layout.fragment_register, container, false);
+        return inflate;
     }
 
-    private void initEvent() {
-        findViewById(R.id.fb_regist_submit).setOnClickListener(new View.OnClickListener() {
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        registerAccount = (EditText) view.findViewById(R.id.fd_regist_account_edit);
+        registerPwd = (EditText) view.findViewById(R.id.fd_regist_pwd_edit);
+
+        view.findViewById(R.id.fb_regist_submit).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                regist();
+                register();
             }
         });
     }
 
-    private void regist() {
-        String accountValue = registAccount.getText().toString().trim();
-        String pwdValue = registPwd.getText().toString().trim();
+    private void register() {
+        String accountValue = registerAccount.getText().toString().trim();
+        String pwdValue = registerPwd.getText().toString().trim();
         if (TextUtils.isEmpty(accountValue)) {
             T.show("帐号为空");
             return;
@@ -62,6 +71,8 @@ public class RegistActivity extends AppCompatActivity {
             @Override
             public void onSuccess(HashMap<String, String> s) {
                 T.show("注册成功");
+                getActivity().setResult(13);
+                getActivity().finish();
             }
 
             @Override
@@ -69,11 +80,5 @@ public class RegistActivity extends AppCompatActivity {
                 T.show(error);
             }
         });
-    }
-
-    private void initView() {
-        registAccount = (EditText) findViewById(R.id.fd_regist_account_edit);
-        registPwd = (EditText) findViewById(R.id.fd_regist_pwd_edit);
-
     }
 }

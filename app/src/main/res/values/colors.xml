@@ -6,5 +6,10 @@
     <color name="fd_white">#ffffffff</color>
     <color name="fd_gray">#eeeeeeee</color>
     <color name="fd_transparent">#00000000</color>
+    <color name="fd_hui">#ee000000</color>
+    <color name="fd_black">#ff000000</color>
 
+    <color name="fd_edit_gray">#eeeeeeee</color>
+    <color name="fd_btn">#ea5014</color>
+    <color name="fd_btn_p">#8c2a04</color>
 </resources>

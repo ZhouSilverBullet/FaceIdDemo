@@ -54,7 +54,11 @@
 
         <service android:name="com.amap.api.location.APSService" />
 
-        <activity android:name=".CameraLoginActivity"></activity>
+        <activity android:name=".CameraLoginActivity" />
+        <activity android:name=".FaceDetectExpActivity" />
+        <activity
+            android:name=".LRActivity"
+            android:theme="@style/no_action_bar" />
     </application>
 
 </manifest>

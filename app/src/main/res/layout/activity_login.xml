@@ -8,6 +8,15 @@
     android:orientation="vertical"
     tools:context="com.ch.zz.faceiddemo.LoginActivity">
 
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:gravity="center"
+        android:text="登录"
+        android:textSize="18sp" />
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -18,13 +27,17 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="用户名："
-            android:textSize="@dimen/fd_text_normal_size" />
+            android:textSize="@dimen/fd_text_normal_size"
+            android:visibility="gone" />
 
-        <EditText
+        <com.ch.zz.faceiddemo.wight.TintEditText
             android:id="@+id/fd_login_account_edit"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:drawableLeft="@drawable/ic_login_username_default"
+            android:drawablePadding="10dp"
             android:hint="@string/fd_login_edit_account_hint"
+            android:singleLine="true"
             android:textSize="@dimen/fd_text_normal_size" />
     </LinearLayout>
 
@@ -38,13 +51,18 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="密\t\t码："
-            android:textSize="@dimen/fd_text_normal_size" />
+            android:textSize="@dimen/fd_text_normal_size"
+            android:visibility="gone" />
 
-        <EditText
+        <com.ch.zz.faceiddemo.wight.TintEditText
             android:id="@+id/fd_login_pwd_edit"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:drawableLeft="@drawable/ic_login_password_default"
+            android:drawablePadding="10dp"
             android:hint="@string/fd_login_edit_pwd_hint"
+            android:inputType="textPassword"
+            android:singleLine="true"
             android:textSize="@dimen/fd_text_normal_size" />
     </LinearLayout>
 

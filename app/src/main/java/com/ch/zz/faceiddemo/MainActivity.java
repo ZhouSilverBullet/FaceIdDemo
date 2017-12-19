@@ -4,20 +4,14 @@ import android.Manifest;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.amap.api.location.AMapLocation;
-import com.amap.api.location.AMapLocationClient;
-import com.amap.api.location.AMapLocationClientOption;
-import com.amap.api.location.AMapLocationListener;
 import com.ch.zz.faceiddemo.utils.FDLocation;
 import com.ch.zz.faceiddemo.utils.T;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 
 import pub.devrel.easypermissions.EasyPermissions;
@@ -28,6 +22,8 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     private Button loginSkip;
     public static final int REQUEST_CODE = 100;
     private View mainLogin;
+    private View regist;
+    private View cameraLoginView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,7 +31,9 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         setContentView(R.layout.activity_main);
         initView();
         initEvent();
-        String[] perms = {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION};
+        String[] perms = {Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.ACCESS_COARSE_LOCATION,
+                Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE};
         if (EasyPermissions.hasPermissions(this, perms)) {
             location();
         } else {
@@ -63,6 +61,22 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         FDLocation.getInstance().location();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        handleBtn();
+    }
+
+    private void handleBtn() {
+        Gloab instance = Gloab.getInstance();
+        if (instance.getBean() == null || TextUtils.isEmpty(instance.getBean().ui)) {
+            cameraLoginView.setVisibility(View.GONE);
+            mainLogin.setVisibility(View.GONE);
+        } else {
+            cameraLoginView.setVisibility(View.VISIBLE);
+            mainLogin.setVisibility(View.VISIBLE);
+        }
+    }
 
     private void initEvent() {
         loginSkip.setOnClickListener(new View.OnClickListener() {
@@ -86,14 +100,16 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
             }
         });
 
-        findViewById(R.id.fd_login_registration).setOnClickListener(new View.OnClickListener() {
+        regist = findViewById(R.id.fd_login_registration);
+        regist.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 registration();
             }
         });
 
-        findViewById(R.id.fd_rigit_to_main).setOnClickListener(new View.OnClickListener() {
+        cameraLoginView = findViewById(R.id.fd_rigit_to_main);
+        cameraLoginView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 cameraLogin();
@@ -102,23 +118,28 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     }
 
     private void cameraLogin() {
-        Intent intent = new Intent(this, CameraLoginActivity.class);
+        Intent intent = new Intent(this, FaceDetectExpActivity.class);
         intent.putExtra("type", 10);
-        startActivityForResult(intent, REQUEST_CODE);
+        startActivityForResult(intent, REQUEST_CODE_NO_ACTION_DETECT);
     }
 
+    private static final int REQUEST_CODE_PICK_IMAGE = 1000;
+    private static final int REQUEST_CODE_NO_ACTION_DETECT = 100;
+    private static final int REQUEST_CODE_LIVENESS_DETECT = 101;
+
     private void registration() {
-        Intent intent = new Intent(this, RegistActivity.class);
-        startActivityForResult(intent, REQUEST_CODE);
+        Intent intent = new Intent(this, LRActivity.class);
+        intent.putExtra("type", 10);
+        startActivityForResult(intent, 13);
     }
 
     private void manLogin() {
-        Intent intent = new Intent(this, CameraLoginActivity.class);
-        startActivityForResult(intent, REQUEST_CODE);
+        Intent intent = new Intent(this, FaceDetectExpActivity.class);
+        startActivityForResult(intent, REQUEST_CODE_NO_ACTION_DETECT);
     }
 
     private void skipLogin() {
-        Intent intent = new Intent(this, LoginActivity.class);
+        Intent intent = new Intent(this, LRActivity.class);
         startActivityForResult(intent, REQUEST_CODE);
     }
 
@@ -126,13 +147,20 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_CODE) {
-            statusText.setText("登录状态：登录成功！");
+            statusText.setText("状态：登录成功！");
+            handleBtn();
+        } else if (requestCode == 13) {
+            statusText.setText("状态：注册成功！");
+        } else if (requestCode == 14) {
+            statusText.setText("状态：绑定成功！");
+        } else if (requestCode == 15) {
+            statusText.setText("状态：人脸验证成功！");
         }
     }
 
     private void initView() {
-        statusText = findViewById(R.id.fd_text_status);
-        loginSkip = findViewById(R.id.fd_login_skip);
+        statusText = (TextView) findViewById(R.id.fd_text_status);
+        loginSkip = (Button) findViewById(R.id.fd_login_skip);
         mainLogin = findViewById(R.id.fd_login_to_main);
     }
 }

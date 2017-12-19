@@ -84,8 +84,8 @@ public class CameraLoginActivity extends AppCompatActivity implements Camera.Pre
     }
 
     private void initView() {
-        hintText = findViewById(R.id.ch_login_hint_text);
-        textureView = findViewById(R.id.ch_login_camera);
+        hintText = (TextView) findViewById(R.id.ch_login_hint_text);
+        textureView = (AutoFitTextureView) findViewById(R.id.ch_login_camera);
 
         textureView.setSurfaceTextureListener(new TextureView.SurfaceTextureListener() {
             @Override
@@ -225,12 +225,15 @@ public class CameraLoginActivity extends AppCompatActivity implements Camera.Pre
             if (Gloab.getInstance().getBean() == null) {
                 T.show("请进行登录");
             } else {
+                if (isFinishing()) {
+                    return;
+                }
                 final LoadingDialog dialog = new LoadingDialog(this, "");
                 dialog.show();
                 new Thread() {
                     @Override
                     public void run() {
-                        File cacheDir = CameraLoginActivity.this.getExternalCacheDir();
+                        File cacheDir = CameraLoginActivity.this.getCacheDir();
                         try {
                             FileOutputStream fos = new FileOutputStream(cacheDir + "/name.jpeg");
                             bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
@@ -254,7 +257,8 @@ public class CameraLoginActivity extends AppCompatActivity implements Camera.Pre
                                         if (dialog != null) {
                                             dialog.dismiss();
                                         }
-                                        loading = false;
+                                        setResult(101);
+                                        finish();
                                     }
                                 });
                             }

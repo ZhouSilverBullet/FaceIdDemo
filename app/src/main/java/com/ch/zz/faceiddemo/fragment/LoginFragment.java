@@ -1,13 +1,16 @@
-package com.ch.zz.faceiddemo;
+package com.ch.zz.faceiddemo.fragment;
 
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
-import android.text.Editable;
+import android.support.annotation.Nullable;
 import android.text.TextUtils;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.ch.zz.faceiddemo.Gloab;
+import com.ch.zz.faceiddemo.R;
 import com.ch.zz.faceiddemo.bean.UserBean;
 import com.ch.zz.faceiddemo.http.FDRequest;
 import com.ch.zz.faceiddemo.http.HttpCallback;
@@ -16,28 +19,28 @@ import com.ch.zz.faceiddemo.utils.T;
 
 import java.util.HashMap;
 
-public class LoginActivity extends AppCompatActivity {
+/**
+ * Created by admin on 2017/12/6.
+ */
 
+public class LoginFragment extends BaseFragment {
     private EditText accountText;
     private EditText pwdText;
     private Button submit;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
-        initView();
-        initEvent();
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View inflate = inflater.inflate(R.layout.fragment_login, container, false);
+        return inflate;
     }
 
-    private void initView() {
-        accountText = (EditText) findViewById(R.id.fd_login_account_edit);
-        pwdText = (EditText) findViewById(R.id.fd_login_pwd_edit);
-        submit = (Button) findViewById(R.id.fb_login_submit);
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        accountText = (EditText) view.findViewById(R.id.fd_login_account_edit);
+        pwdText = (EditText) view.findViewById(R.id.fd_login_pwd_edit);
+        submit = (Button) view.findViewById(R.id.fb_login_submit);
 
-    }
-
-    private void initEvent() {
         submit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -85,8 +88,8 @@ public class LoginActivity extends AppCompatActivity {
                 }
                 T.show("登陆成功");
                 //网络登录
-                setResult(99);
-                finish();
+                getActivity().setResult(100);
+                getActivity().finish();
             }
 
             @Override
@@ -94,6 +97,5 @@ public class LoginActivity extends AppCompatActivity {
                 T.show(error);
             }
         });
-
     }
 }

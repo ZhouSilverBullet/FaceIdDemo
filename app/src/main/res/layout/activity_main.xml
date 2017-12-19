@@ -17,32 +17,44 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
         android:gravity="center"
-        android:orientation="horizontal">
+        android:orientation="vertical">
 
         <Button
             android:id="@+id/fd_login_skip"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="点击登录" />
+            android:layout_height="40dp"
+            android:background="@drawable/color_cursor_text"
+            android:text="点击登录"
+            android:textColor="@color/fd_white" />
 
         <Button
             android:id="@+id/fd_login_registration"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="点击注册" />
+            android:layout_height="40dp"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/color_cursor_text"
+            android:text="点击注册"
+            android:textColor="@color/fd_white" />
 
         <Button
             android:id="@+id/fd_login_to_main"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="人脸绑定" />
+            android:layout_height="40dp"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/color_cursor_text"
+            android:text="人脸绑定"
+            android:textColor="@color/fd_white" />
 
         <Button
             android:id="@+id/fd_rigit_to_main"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="人脸登陆" />
+            android:layout_height="40dp"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/color_cursor_text"
+            android:text="人脸登陆"
+            android:textColor="@color/fd_white" />
 
     </LinearLayout>
 

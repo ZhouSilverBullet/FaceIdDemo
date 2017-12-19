@@ -14,7 +14,7 @@ public class T {
 
     public static void show(String msg) {
         if (toast == null) {
-            toast = Toast.makeText(AppContext.getContext(), msg, Toast.LENGTH_LONG);
+            toast = Toast.makeText(AppContext.getContext(), msg, Toast.LENGTH_SHORT);
         } else {
             toast.setText(msg);
         }
